@@ -1,0 +1,54 @@
+```{r}
+# Install and load required libraries
+library(ggplot2)
+library(readr)
+library(dplyr)
+```
+
+```{r}
+
+# Membaca file CSV
+data <- read_csv("us_county_sociohealth_data.csv")
+```
+
+```{r}
+# Calculate the number of missing values
+missing_data <- sum(is.na(data))
+
+# Remove rows with missing values
+finish <- na.omit(data)
+
+```
+
+
+```{r}
+
+# Menampilkan beberapa baris pertama dari data
+head(finish)
+```
+```{r}
+# Hitung jumlah variabel
+jumlah_variabel <- ncol(finish)
+
+print(paste("Jumlah variabel:", jumlah_variabel))
+
+```
+```{r}
+str(finish)
+```
+```{r}
+# Hitung statistik deskriptif untuk variabel numerik
+summary(finish[, c("total_population", "num_deaths", "percent_smokers", "percent_adults_with_obesity")])
+
+```
+```{r}
+# Plot scatterplot antara total_population dan num_deaths
+plot(finish$total_population, finish$num_deaths, xlab = "Total Population", ylab = "Number of Deaths", main = "Scatterplot")
+
+```
+
+```{r}
+# Histogram untuk variabel percent_smokers
+hist(finish$percent_smokers, main = "Distribution of Percent Smokers", xlab = "Percent Smokers")
+```
+

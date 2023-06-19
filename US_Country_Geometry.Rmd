@@ -1,0 +1,265 @@
+```{r}
+# Install dan muat paket
+install.packages("tidyverse")
+install.packages("sf")
+install.packages("ggplot2")
+```
+```{r}
+# Muat paket
+library(tidyverse)
+library(sf)
+library(ggplot2)
+library(readr)
+library(dplyr)
+
+library(caret)
+library(MLmetrics)
+
+#random forest model
+library(randomForest)
+#SVM
+library(e1071)
+#Decision Tree
+library(party)
+library(rpart)
+
+library(mlbench)
+
+#ROC
+library(pROC)
+```
+
+```{r}
+# Muat dataset
+ucg <- read_csv("us_county_geometry.csv")
+```
+
+
+```{r}
+#cek data
+head(ucg)
+
+```
+
+```{r}
+# Tampilkan struktur data
+str(ucg)
+
+```
+```{r}
+
+# Tampilkan ringkasan statistik
+summary(ucg)
+```
+
+```{r}
+# Tampilkan jumlah baris dan kolom
+dim(ucg)
+
+```
+```{r}
+# Tampilkan nama kolom
+colnames(ucg)
+
+```
+
+
+```{r}
+summary(ucg$shape_len)
+```
+
+```{r}
+colSums(is.na(ucg))
+```
+
+```{r}
+# Menghapus kolom yang tidak relevan karena ada missing value juga
+ucg <- subset(ucg, select = -c(objectid, geometry))
+
+```
+
+```{r}
+summary(ucg)
+```
+
+
+```{r}
+summary(ucg$shape_len)
+#nilainya tetap sama
+```
+```{r}
+# Calculate the number of missing values
+#missing_count <- sum(is.na(ucg))
+
+# Remove rows with missing values
+#covid <- na.omit(ucg)
+
+#ketika di cek,
+```
+
+
+```{r}
+
+# Visualisasi data
+# Misalnya, histogram untuk kolom "shape_are"
+hist(ucg$shape_are)
+
+```
+
+```{r}
+hist(ucg$shape_len)
+```
+
+```{r}
+# Distribusi variabel "state"
+table(ucg$state)
+
+```
+
+
+```{r}
+# Statistik ringkasan untuk variabel "shape_len"
+summary(ucg$shape_len)
+```
+
+```{r}
+# Histogram dari kolom tertentu, misalnya 'shape_are'
+ggplot(ucg, aes(x = shape_are)) +
+  geom_histogram()
+
+
+```
+
+```{r}
+# Korelasi antara "shape_are" dan "shape_len"
+cor(ucg$shape_are, ucg$shape_len)
+```
+
+
+```{r}
+# Visualisasi hubungan antara "shape_are" dan "shape_len"
+plot(ucg$shape_are, ucg$shape_len)
+
+```
+
+
+```{r}
+# Box plot
+ggplot(ucg) +
+  geom_boxplot(aes(y = shape_len))
+
+```
+
+
+```{r}
+#Transformasi Data
+ucg$log_shape_are <- log(ucg$shape_are)
+
+```
+
+```{r}
+#analisis regresi
+model <- lm(shape_len ~ shape_are, data = ucg)
+summary(model)
+
+```
+
+
+```{r}
+# Mengambil subset data untuk county A dan county B
+county_A <- subset(ucg, county == "A")
+county_B <- subset(ucg, county == "B")
+
+# Memeriksa jumlah observasi dalam setiap subset
+n_A <- nrow(county_A)
+n_B <- nrow(county_B)
+
+if (n_A < 2 || n_B < 2) {
+  print("Tidak cukup observasi dalam salah satu subset untuk melakukan uji t.")
+} else {
+  # Uji t-test
+  t_test_result <- t.test(county_A$shape_are, county_B$shape_are)
+  print(t_test_result)
+}
+
+
+
+```
+
+
+```{r}
+#ucg$county <- as.character(ucg$county)
+
+```
+
+```{r}
+# Mengambil subset data untuk tiga kelompok county
+county_1 <- subset(ucg, county == "A")
+county_2 <- subset(ucg, county == "B")
+county_3 <- subset(ucg, county == "C")
+
+# Uji ANOVA
+anova_result <- aov(shape_are ~ county, data = ucg)
+print(anova_result)
+
+```
+
+
+```{r}
+# Uji korelasi Pearson
+cor_result <- cor.test(ucg$shape_are, ucg$shape_len, method = "pearson")
+print(cor_result)
+
+```
+```{r}
+write.csv(ucg, "cleaned_us_county_geometry.csv", row.names = FALSE)
+
+```
+
+```{r}
+# Muat dataset
+wellucg <- read_csv("cleaned_us_county_geometry.csv")
+```
+```{r}
+library(ggplot2)
+# Memilih kolom yang berisi data numerik
+numeric_cols <- c('shape_are', 'shape_len', 'log_shape_are')
+
+# Membuat boxplot
+ggplot(wellucg, aes(x = "", y = shape_are)) +
+  geom_boxplot() +
+  labs(title = "Boxplot Data Outlier", y = "Nilai") +
+  theme_bw()
+  
+ggplot(wellucg, aes(x = "", y = shape_len)) +
+  geom_boxplot() +
+  labs(title = "Boxplot Data Outlier", y = "Nilai") +
+  theme_bw()
+  
+ggplot(wellucg, aes(x = "", y = log_shape_are)) +
+  geom_boxplot() +
+  labs(title = "Boxplot Data Outlier", y = "Nilai") +
+  theme_bw()
+```
+```{r}
+set.seed(12321)
+train_idx <- sample(nrow(ucg),round(0.7*nrow(ucg)))
+train_idx
+train_data <- ucg[train_idx,]
+test_data <- ucg[-train_idx,]
+```
+```{r}
+nrow(train_data)
+nrow(test_data)
+```
+```{r}
+library(readr)
+
+# Membaca data dari file CSV
+data <- read_csv("cleaned_us_county_geometry.csv")
+
+# Menampilkan nama kolom yang tersedia
+names(data)
+
+```
+

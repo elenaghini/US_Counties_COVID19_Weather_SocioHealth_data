@@ -1,0 +1,214 @@
+```{r}
+# Load the required libraries
+library(dplyr)
+library(readr)
+```
+
+
+```{r}
+# Read the dataset
+df <- read_csv("US_counties_COVID19_health_weather_data.csv")
+```
+
+
+```{r}
+# Calculate the number of missing values
+missing_count <- sum(is.na(df))
+
+# Remove rows with missing values
+covid <- na.omit(df)
+
+```
+
+```{r}
+head(covid)
+```
+```{r}
+str(covid)
+```
+
+
+```{r}
+# Display summary statistics
+summary(covid)
+```
+
+
+```{r}
+library(ggplot2)
+# Plot the distribution of COVID-19 cases
+ggplot(covid, aes(x = cases)) +
+  geom_histogram(binwidth = 1000, fill = "blue", color = "black") +
+  labs(x = "COVID-19 Cases", y = "Frequency", title = "Distribution of COVID-19 Cases")
+```
+
+
+```{r}
+# Calculate the total number of COVID-19 cases
+total_cases <- sum(covid$cases)
+cat("Total COVID-19 cases:", total_cases, "\n")
+```
+```{r}
+library(ggplot2)
+
+# Membuat histogram dari variabel "cases"
+ggplot(covid, aes(x = cases)) +
+  geom_histogram(fill = "steelblue", bins = 20) +
+  labs(title = "Histogram of COVID-19 Cases", x = "Cases", y = "Frequency")
+
+```
+
+```{r}
+# Membuat scatter plot dari variabel "cases" dan "deaths"
+ggplot(covid, aes(x = cases, y = deaths)) +
+  geom_point(color = "steelblue") +
+  labs(title = "Scatter Plot of COVID-19 Cases and Deaths", x = "Cases", y = "Deaths")
+
+```
+
+```{r}
+# Membuat box plot dari variabel "percent_fair_or_poor_health" berdasarkan variabel "state"
+ggplot(covid, aes(x = state, y = percent_fair_or_poor_health)) +
+  geom_boxplot(fill = "steelblue") +
+  labs(title = "Box Plot of Percent Fair or Poor Health by State", x = "State", y = "Percent")
+
+```
+
+```{r}
+library(ggplot2)
+
+# Membuat bar plot dari variabel "state" dan "cases"
+ggplot(covid, aes(x = state, y = cases)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(title = "Bar Plot of COVID-19 Cases by State", x = "State", y = "Cases") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))  # Memutar label sumbu x
+
+```
+
+```{r}
+
+```
+
+
+```{r}
+# Menghitung jumlah kasus COVID-19 harian
+daily_cases <- aggregate(cases ~ date, data = df, FUN = sum)
+
+# Membuat line plot jumlah kasus harian
+ggplot(daily_cases, aes(x = date, y = cases)) +
+  geom_line(color = "steelblue") +
+  labs(title = "Daily COVID-19 Cases", x = "Date", y = "Cases") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+```{r}
+# Load the required libraries
+library(readr)
+library(dplyr)
+
+# Read the dataset
+df <- read_csv("US_counties_COVID19_health_weather_data.csv")
+
+# Perform a t-test to compare the mean cases between two groups
+t_test_result <- t.test(df$group_a_cases, df$group_b_cases)
+
+# Print the t-test result
+print(t_test_result)
+
+
+
+library(dplyr)
+
+
+# Perform a t-test to compare the mean cases between two groups
+t_test_result <- t.test(covid$group_a_cases, covid$group_b_cases)
+
+# Print the t-test result
+print(t_test_result)
+
+
+```
+
+
+```{r}
+lm_model <- lm(cases ~ population_density_per_sqmi, data = df)
+
+# Print the regression summary
+summary(lm_model)
+
+# Plot the regression line
+ggplot(df, aes(x = population_density_per_sqmi, y = cases)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+```
+```{r}
+# Perform a t-test to compare the mean cases between two groups
+t_test_result <- t.test(covid$group_a_cases, covid$group_b_cases)
+
+# Print the t-test result
+print(t_test_result)
+```
+
+
+```{r}
+#t-test
+yes_rate_woman <- covid$percent_female[covid$stay_at_home_effective == "no"]
+no_rate_woman <- covid$percent_female[data$stay_at_home_effective == "yes"]
+t_test <- t.test(yes_rate_woman, no_rate_woman)
+t_test
+
+```
+
+```{r}
+yes_rate_woman <- covid$percent_female[covid$stay_at_home_effective == "no"]
+no_rate_woman <- covid$percent_female[covid$stay_at_home_effective == "yes"]
+t_test <- t.test(yes_rate_woman, no_rate_woman)
+t_test
+
+```
+
+```{r}
+# Menghitung matriks korelasi
+correlation_matrix <- cor(covid[, c("cases", "deaths", "percent_adults_with_obesity", "percent_smokers")])
+
+# Menampilkan matriks korelasi
+print(correlation_matrix)
+
+```
+
+```{r}
+# Melakukan uji korelasi
+correlation_test <- cor.test(covid$cases, covid$deaths)
+
+# Menampilkan hasil uji korelasi
+print(correlation_test)
+
+```
+
+```{r}
+# Melakukan uji korelasi
+correlation_test <- cor.test(covid$percent_adults_with_obesity, covid$percent_smokers)
+
+# Menampilkan hasil uji korelasi
+print(correlation_test)
+
+```
+
+```{r}
+correlation_matrix <- cor(covid[, c("percent_physically_inactive", "percent_with_annual_mammogram", "percent_frequent_physical_distress", "percent_adults_with_diabetes")])
+print(correlation_matrix)
+
+```
+
+
+```{r}
+#analisis regresi
+# Melakukan analisis regresi
+regression_model <- lm(cases ~ percent_adults_with_obesity, data = covid)
+
+# Menampilkan ringkasan hasil regresi
+summary(regression_model)
+
+```
+
+
